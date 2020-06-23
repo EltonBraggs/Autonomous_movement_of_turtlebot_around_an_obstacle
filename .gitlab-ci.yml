@@ -1,12 +1,31 @@
-image: 141.69.58.19:5000/iki/ros-kinetic-amr:latest
+image: docker:latest
 
-before_script:
-  - source /root/catkin_ws/devel/setup.bash
+variables:
+  GIT_CLONE_PATH: /root/catkin_ws/src
 
 stages:
-    - catkin make
+  - docker_image
+  - verify code
+
+docker image:
+  stage: docker_image
+  tags:
+     - docker-images
+  only:
+    changes:
+      - docker/*
+
+  script:
+    - docker build -t fbe-dockerreg.rwu.de/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME docker/
+    - docker push fbe-dockerreg.rwu.de/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
 
 catkin make:
-    stage: catkin make
+    stage: verify code
+    image: fbe-dockerreg.rwu.de/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
     script:
-    - roscd; cd ..; catkin_make
+      - echo "test"
+      - ls -lA
+      - pwd
+      - source /root/catkin_ws/devel/setup.bash
+      - cd /root/catkin_ws
+      - catkin_make
