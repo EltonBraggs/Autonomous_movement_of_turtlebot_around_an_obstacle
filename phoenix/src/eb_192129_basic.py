@@ -17,7 +17,7 @@ def callback_goalpoint(msg):
     global goals_list
     for i in range(len(msg.goals)):
         if msg.goals[i].reward > 0:
-        	goals_list.append([[msg.goals[i].x, msg.goals[i].y, msg.goals[i].z,msg.goals[i].reward,0.0]])
+        	goals_list.append([[msg.goals[i].x, msg.goals[i].y, msg.goals[i].z,msg.goals[i].reward]])
 
 
 def callback_position(pos):
@@ -42,21 +42,11 @@ def goal_struct(point):
     my_goals.target_pose.pose.orientation.z = 0
     my_goals.target_pose.pose.orientation.w = 1
     return my_goals
-def dists(point):
-    for i in range(len(point)):
-       x=point[i][0]
-       y=point[i][1]
-       d=math.sqrt((current_x_pos-x)**2 + (current_y_pos-y)**2)
-       goals_list[i][4]=d
 
 
-def sortSecond(val):
-   return val[3]
 
-def goal_sort():
-    dists(goals_list)
-    goals_list=goals_list.sort(key=sortSecond, reverse = True)
-    return goals_list
+
+
 
 # val[3], goals_list=goals_list.sort(key = sortSecond, reverse = True)
 
@@ -64,13 +54,13 @@ def goal_sort():
 rospy.init_node("final_prj")
 
 # Subscribe to /goals topic to fetch the goal points
-sub = rospy.Subscriber("/scan", PointArray, callback_goalpoint)
+sub = rospy.Subscriber("/goals", PointArray, callback_goalpoint)
 
 # Subscribe to /amcl_pose topic to localize the turtlebot in the given map
-sub_loc = rospy.Subscriber("/initialpose", PoseWithCovarianceStamped , callback_position)
+sub_loc = rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped , callback_position)
 
 # Creating an action client that communicates with action server /move_base that uses a message MoveBaseAction
-client = actionlib.SimpleActionClient("/move_base_simple/goal", MoveBaseAction)
+client = actionlib.SimpleActionClient("/move_base", MoveBaseAction)
 # Action client waits for the action server to be launched and then sends the goals to the server
 client.wait_for_server()
 
@@ -79,11 +69,12 @@ rate = rospy.Rate(2)
 while not rospy.is_shutdown():
     n=len(goals_list)
     for i in range(n):
-        goals_list= goal_sort()
+        #goals_list= goal_sort()
+        goal=goal_struct(goals_list[1])
 
         rospy.sleep(5)
         client.send_goal(goal)
-        client.wait_for_result(rospy.Duration(t))
+        client.wait_for_result(rospy.Duration(2))
         x=goal.target_pose.pose.position.x
         y=goal.target_pose.pose.position.y
         d=math.sqrt((current_x_pos-x)**2 + (current_y_pos-y)**2)
