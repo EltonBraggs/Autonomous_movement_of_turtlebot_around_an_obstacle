@@ -1,29 +1,43 @@
 <launch>
 
-  <!-- Launching the turtlebot environment-->
-<include file="$(find turtlebot3_gazebo)/launch/turtlebot3_empty_world.launch" />
+
+
+
+
+  <!-- start world
+  <node name="gazebo" pkg="gazebo_ros" type="gazebo"
+   args="$(find turtlebot3_gazebo)/worlds/empty.world" respawn="false" output="screen" />
    Spawning the model onto the environment
   <node pkg="gazebo_ros" type="spawn_model" name="spawn_model"
     args="-file /home/elton/catkin_ws/src/rr-192152_tier4/final_project_practice/model2.sdf -sdf -x 3 -y -4 -model final_prj"
     output="screen">
-  </node>
-  <!-- Launching the Map -->
-  <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch">
-    <arg name="map_file" default="/home/elton/catkin_ws/src/rr-192152_tier4/final_project_practice/map2.yaml" />
+  </node>-->
+
+  <!-- include our robots -->
+
+  <arg name="robot_id" default="robot1"/>
+  <!--arg name="robot_tf" default="robot1_tf" /-->
+  <arg name="robot_name" default="Robot1" />
+
+
+
+
+
+  <include file="$(find turtlebot3_navigation )/launch/turtlebot3_navigation.launch">
   </include>
 
-  <!-- Publishing the /goals topic -->
-  <!--<include file="$(find goal_publisher)/launch/goal_publisher.launch">
-  <arg name="config_file" default="practice_goals.yaml"/>
-  <node pkg="goal_publisher" type="goal_pub.py" name="goal_pub" output="screen">
-    <param name="config_file" value="$(arg config_file)" type="str" />
-  </node>
-  <node pkg="goal_publisher" type="marker_pub.py" name="marker_pub" output="screen">
-		<param name="config_file" value="$(arg config_file)" type="str"/>
-	</node>
-</include>-->
+  <param name="robot_description"
+    command="$(find xacro)/xacro $(find turtlebot3_description)/urdf/turtlebot3_burger.urdf.xacro" />
+
+  
+
+  <include file="$(find multi_turtlebot)/launch/main.launch">
+  </include>
+
+
+
 
   <!-- Launching the final project node -->
-  <node pkg="phoenix" type="eb_192129_basic.py" name="final_prj" output="screen">
+  <node pkg="phoenix" type="eb_192129_basic.py" name="final_prj" ns="$(arg robot_id)"  arg = "$(arg robot_name)" output="screen">
   </node>
 </launch>

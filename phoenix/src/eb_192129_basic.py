@@ -8,6 +8,11 @@ from tf import transformations
 from tf.transformations import euler_from_quaternion
 import actionlib
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction, MoveBaseResult
+#from home.elton.catkin_ws.src.amr_multi_turtlebot.multi_turtlebot.launch import robots
+#from launch import robots
+
+
+
 
 # Defining a list - goals_list
 goals_list = list()
