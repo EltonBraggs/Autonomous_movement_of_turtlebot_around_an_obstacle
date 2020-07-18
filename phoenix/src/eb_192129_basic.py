@@ -21,8 +21,7 @@ goals_list = list()
 def callback_goalpoint(msg):
     global goals_list
     for i in range(len(msg.goals)):
-        if msg.goals[i].reward > 0:
-        	goals_list.append([[msg.goals[i].x, msg.goals[i].y, msg.goals[i].z,msg.goals[i].reward]])
+        goals_list.append([[msg.goals[i].x, msg.goals[i].y, msg.goals[i].z,msg.goals[i].reward]])
 
 
 def callback_position(pos):
@@ -38,7 +37,7 @@ def callback_position(pos):
 # Crearting the goal message and sending it to the action server
 def goal_struct(point):
     my_goals = MoveBaseGoal()
-    my_goals.target_pose.header.frame_id = "map"
+    my_goals.target_pose.header.frame_id = "/map"
     my_goals.target_pose.pose.position.x = point[0][0]
     my_goals.target_pose.pose.position.y = point[0][1]
     my_goals.target_pose.pose.position.z = 0
@@ -65,7 +64,7 @@ sub = rospy.Subscriber("/goals", PointArray, callback_goalpoint)
 sub_loc = rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped , callback_position)
 
 # Creating an action client that communicates with action server /move_base that uses a message MoveBaseAction
-client = actionlib.SimpleActionClient("/move_base", MoveBaseAction)
+client = actionlib.SimpleActionClient("/move_base/goal", MoveBaseAction)
 # Action client waits for the action server to be launched and then sends the goals to the server
 client.wait_for_server()
 
@@ -75,7 +74,8 @@ while not rospy.is_shutdown():
     n=len(goals_list)
     for i in range(n):
         #goals_list= goal_sort()
-        goal=goal_struct(goals_list[1])
+        print('1')
+        goal=goal_struct(goals_list[0])
 
         rospy.sleep(5)
         client.send_goal(goal)
