@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import rospy
 import math
 from goal_publisher.msg import PointArray
@@ -8,11 +7,6 @@ from tf import transformations
 from tf.transformations import euler_from_quaternion
 import actionlib
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction, MoveBaseResult
-#from home.elton.catkin_ws.src.amr_multi_turtlebot.multi_turtlebot.launch import robots
-#from launch import robots
-
-
-
 
 # Defining a list - goals_list
 goals_list = list()
@@ -21,8 +15,7 @@ goals_list = list()
 def callback_goalpoint(msg):
     global goals_list
     for i in range(len(msg.goals)):
-        goals_list.append([[msg.goals[i].x, msg.goals[i].y, msg.goals[i].z,msg.goals[i].reward]])
-
+        goals_list.append([msg.goals[i].x, msg.goals[i].y, msg.goals[i].z,msg.goals[i].reward])
 
 def callback_position(pos):
     global current_x_pos
@@ -37,7 +30,7 @@ def callback_position(pos):
 # Crearting the goal message and sending it to the action server
 def goal_struct(point):
     my_goals = MoveBaseGoal()
-    my_goals.target_pose.header.frame_id = "/map"
+    my_goals.target_pose.header.frame_id = "map"
     my_goals.target_pose.pose.position.x = point[0][0]
     my_goals.target_pose.pose.position.y = point[0][1]
     my_goals.target_pose.pose.position.z = 0
@@ -46,11 +39,6 @@ def goal_struct(point):
     my_goals.target_pose.pose.orientation.z = 0
     my_goals.target_pose.pose.orientation.w = 1
     return my_goals
-
-
-
-
-
 
 # val[3], goals_list=goals_list.sort(key = sortSecond, reverse = True)
 
@@ -61,33 +49,36 @@ rospy.init_node("final_prj")
 sub = rospy.Subscriber("/goals", PointArray, callback_goalpoint)
 
 # Subscribe to /amcl_pose topic to localize the turtlebot in the given map
-sub_loc = rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped , callback_position)
+sub_loc = rospy.Subscriber("amcl_pose", PoseWithCovarianceStamped , callback_position)
 
 # Creating an action client that communicates with action server /move_base that uses a message MoveBaseAction
-client = actionlib.SimpleActionClient("/move_base/goal", MoveBaseAction)
+client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
 # Action client waits for the action server to be launched and then sends the goals to the server
 client.wait_for_server()
 
 rate = rospy.Rate(2)
 
+while not goals_list:
+	rospy.sleep(0.2) 
+	list1 = goals_list
+	print(list1)
+
 while not rospy.is_shutdown():
-    n=len(goals_list)
-    for i in range(n):
-        #goals_list= goal_sort()
-        print('1')
-        goal=goal_struct(goals_list[0])
+	n=len(goals_list)
+	for i in range(n):
+	    goal=goal_struct(goals_list[i])
 
-        rospy.sleep(5)
-        client.send_goal(goal)
-        client.wait_for_result(rospy.Duration(2))
-        x=goal.target_pose.pose.position.x
-        y=goal.target_pose.pose.position.y
-        d=math.sqrt((current_x_pos-x)**2 + (current_y_pos-y)**2)
+            rospy.sleep(5)
+            client.send_goal(goal)
+            client.wait_for_result(rospy.Duration(t))
+            x=goal.target_pose.pose.position.x
+            y=goal.target_pose.pose.position.y
+            d=math.sqrt((current_x_pos-x)**2 + (current_y_pos-y)**2)
 
 
-        if client.get_state() == 3 or d<0.015:
-            print("Goal {} has reached!".format(i))
-            rospy.sleep(1)
-            del goals_list[i]
-        else:
-            client.cancel_goal()
+           if client.get_state() == 3 or d<0.015:
+              print("Goal {} has reached!".format(i))
+              rospy.sleep(1)
+            
+           else:
+              client.cancel_goal()

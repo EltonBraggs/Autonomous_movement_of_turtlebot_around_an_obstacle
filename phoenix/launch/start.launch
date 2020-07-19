@@ -1,5 +1,12 @@
 <launch>
 
+<<<<<<< HEAD
+  <arg name="robot_id" default="robot1"/>
+
+  <!-- Launching the final project node -->
+  <node pkg="phoenix" type="new.py" name="prj_phoenix" output = "screen" ns="$(arg robot_id)" />
+  </launch>
+=======
 
 
 
@@ -30,3 +37,4 @@
     <param name="tf_prefix" type="string" value = "$(arg robot_tf)" />
   </node>
 </launch>
+>>>>>>> 397cf99947d99447aecca04154e20aede020a71d
