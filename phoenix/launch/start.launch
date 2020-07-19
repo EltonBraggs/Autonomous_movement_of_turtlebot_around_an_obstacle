@@ -1,7 +1,40 @@
 <launch>
 
+<<<<<<< HEAD
   <arg name="robot_id" default="robot1"/>
 
   <!-- Launching the final project node -->
   <node pkg="phoenix" type="new.py" name="prj_phoenix" output = "screen" ns="$(arg robot_id)" />
   </launch>
+=======
+
+
+
+
+  <!-- start world
+  <node name="gazebo" pkg="gazebo_ros" type="gazebo"
+   args="$(find turtlebot3_gazebo)/worlds/empty.world" respawn="false" output="screen" />
+   Spawning the model onto the environment
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_model"
+    args="-file /home/elton/catkin_ws/src/rr-192152_tier4/final_project_practice/model2.sdf -sdf -x 3 -y -4 -model final_prj"
+    output="screen">
+  </node>-->
+
+  <!-- include our robots -->
+  <arg name="robot_id" default="robot1"/>
+  <arg name="robot_tf" default="robot1_tf" />
+  <arg name="robot_name" default="Robot1" />
+  <arg name = "robot_description" default = "robot1_tf" />
+  <param name="tf_prefix" value = "$(arg robot_tf)" />
+  <param name="tf_prefix" type="string" value = "$(arg robot_tf)" />
+
+  <include file="$(find multi_turtlebot)/launch/main.launch">
+  </include>
+
+  <!-- Launching the final project node -->
+  <node pkg="phoenix" type="eb_192129_basic.py" name="final_prj" ns="$(arg robot_id)"  args = "$(arg robot_name) $(arg robot_tf)  " output="screen">
+    <param name="tf_prefix" value = "$(arg robot_tf)" />
+    <param name="tf_prefix" type="string" value = "$(arg robot_tf)" />
+  </node>
+</launch>
+>>>>>>> 397cf99947d99447aecca04154e20aede020a71d
