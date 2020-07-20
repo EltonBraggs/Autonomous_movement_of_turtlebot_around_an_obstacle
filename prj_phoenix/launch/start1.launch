@@ -21,6 +21,10 @@
   <arg name="robot_id" default="robot1"/>
 
   <!-- Launching the final project node -->
+<<<<<<< HEAD
   <node pkg="prj_phoenix" type="eb_192129_basic.py" name="final_prj" ns="$(arg robot_id)" output="screen">
+=======
+  <node pkg="phoenix" type="eb_192129_basic.py" name="final_prj" ns="$(arg robot_id)" output="screen">
+>>>>>>> b628529c479f0c3096161d1bb92e9e2311936ba6
   </node>
 </launch>

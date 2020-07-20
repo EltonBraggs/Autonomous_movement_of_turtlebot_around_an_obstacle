@@ -99,8 +99,8 @@ def adjust_position():
         if regions['front'] < d and regions['fleft'] < d :
             #state_description = 'case 2 - front and left'
             for j in range(0,10):
-                speed.linear.x = 0.5
-                speed.angular.z = -0.2
+                speed.linear.x = 0.1
+                speed.angular.z = -0.1
                 pub_twist.publish(speed)
     else:
         client.wait_for_server()
@@ -116,20 +116,13 @@ rospy.init_node("prj_phoenix")
 sub = rospy.Subscriber("/goals", PointArray, callback_goalpoint)
 
 # Subscribe to /amcl_pose topic to localize the turtlebot in the given map
-sub_loc = rospy.Subscriber("amcl_pose", PoseWithCovarianceStamped , callback_position)
+sub_loc = rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped , callback_position)
 
 # Creating an action client that communicates with action server /move_base that uses a message MoveBaseAction
-<<<<<<< HEAD
-client = actionlib.SimpleActionClient("move_base_simple/goal", MoveBaseAction)
-# Action client waits for the action server to be launched and then sends the goals to the server
-laser_sub = rospy.Subscriber("/scan" , LaserScan , callback_scan)
-pub_twist = rospy.Publisher('/cmd_vel', Twist, queue_size =2)
-=======
-client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+client = actionlib.SimpleActionClient("/move_base", MoveBaseAction)
 # Action client waits for the action server to be launched and then sends the goals to the server
 laser_sub = rospy.Subscriber("scan" , LaserScan , callback_scan)
 pub_twist = rospy.Publisher('cmd_vel', Twist, queue_size =2)
->>>>>>> b628529c479f0c3096161d1bb92e9e2311936ba6
 client.wait_for_server()
 
 rate = rospy.Rate(2)
@@ -156,11 +149,11 @@ while not rospy.is_shutdown():
         x=goal.target_pose.pose.position.x
         y=goal.target_pose.pose.position.y
         dist=math.sqrt((current_x_pos-x)**2 + (current_y_pos-y)**2)
-        #if client.wait_for_result(rospy.Duration(5)):
-            #print("Goal {} has skipped!".format(i))
-            #client.get_state() == 4
-            #client.cancel_goals_at_and_before_time()
-            #adjust_position()
+        if client.wait_for_result(rospy.Duration(15)):
+            print("Goal {} has skipped!".format(i))
+            client.get_state() == 4
+            client.cancel_goals_at_and_before_time()
+            adjust_position()
 
 
         if client.get_state() == 3 or dist<0.5:

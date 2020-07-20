@@ -28,7 +28,7 @@ def callback_goalpoint(msg):
     initx = current_x_pos
     inity = current_y_pos
     for i in range(len(msg.goals)):
-	#adding goal coordinates and respective rewards to goals_list
+	#adding goal coordinates and respective rewards to goals_list:
         goals_list.append([msg.goals[i].x, msg.goals[i].y, msg.goals[i].z, msg.goals[i].reward]) 
 
     #appending dist_list and final_order lists: 
