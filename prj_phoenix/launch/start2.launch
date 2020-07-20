@@ -13,7 +13,11 @@
     output="screen">
   </node>-->
 
+<<<<<<< HEAD
+  <!-- include our robots -->
+=======
   <!-- include our robots iteration_3.py -->
+>>>>>>> b628529c479f0c3096161d1bb92e9e2311936ba6
 
 
 
@@ -21,9 +25,12 @@
   <arg name="robot_id" default="robot1"/>
 
   <!-- Launching the final project node -->
+<<<<<<< HEAD
+=======
   <!--node pkg="prj_phoenix" type="eb_192129_iteration_2.py" name="prj_phoenix" ns="$(arg robot_id)" output="screen">
 </node>-->
 
+>>>>>>> b628529c479f0c3096161d1bb92e9e2311936ba6
   <node pkg="prj_phoenix" type="eb_192129_iteration_2.py" name="prj_phoenix" ns="$(arg robot_id)" output="screen">
   </node>
 </launch>

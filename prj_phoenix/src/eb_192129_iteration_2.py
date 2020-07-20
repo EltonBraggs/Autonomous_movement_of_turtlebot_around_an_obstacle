@@ -119,10 +119,17 @@ sub = rospy.Subscriber("/goals", PointArray, callback_goalpoint)
 sub_loc = rospy.Subscriber("amcl_pose", PoseWithCovarianceStamped , callback_position)
 
 # Creating an action client that communicates with action server /move_base that uses a message MoveBaseAction
+<<<<<<< HEAD
+client = actionlib.SimpleActionClient("move_base_simple/goal", MoveBaseAction)
+# Action client waits for the action server to be launched and then sends the goals to the server
+laser_sub = rospy.Subscriber("/scan" , LaserScan , callback_scan)
+pub_twist = rospy.Publisher('/cmd_vel', Twist, queue_size =2)
+=======
 client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
 # Action client waits for the action server to be launched and then sends the goals to the server
 laser_sub = rospy.Subscriber("scan" , LaserScan , callback_scan)
 pub_twist = rospy.Publisher('cmd_vel', Twist, queue_size =2)
+>>>>>>> b628529c479f0c3096161d1bb92e9e2311936ba6
 client.wait_for_server()
 
 rate = rospy.Rate(2)
