@@ -9,6 +9,31 @@ from tf.transformations import euler_from_quaternion
 import actionlib
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction, MoveBaseResult
 
+from sensor_msgs.msg import LaserScan
+from std_msgs.msg import Header
+from geometry_msgs.msg import Twist
+#from home.elton.catkin_ws.src.amr_multi_turtlebot.multi_turtlebot.launch import robots
+#from launch import robots
+d=0.5
+pub_twist = None
+
+regions={'right':0.0,
+ 'fright':0.0,
+ 'front':0.0,
+ 'fleft':0.0,
+ 'left':0.0
+ }
+
+def callback_scan(msg):
+    global regions  ,   pub
+    max_    =   3.5
+    regions =   {'right'    :   min(min(msg.ranges[270:319]),max_),
+     'fright'   :   min(min(msg.ranges[320:349]),max_),
+     'front'    :   min(min(msg.ranges[0:10] , msg.ranges[350:360]),max_),
+     'fleft'    :   min(min(msg.ranges[11:50]),max_),
+     'left'     :   min(min(msg.ranges[51:90]),max_)
+     }
+
 # Defining a list - goals_list
 goals_list = list()
 final_order = list()
@@ -62,6 +87,19 @@ def goal_struct(point):
     my_goals.target_pose.pose.orientation.w = 1
     return my_goals
 
+def adjust_position(current_x_pos , current_y_pos):
+    global regions
+    speed = Twist()
+    while (regions['front'] > d and regions['fleft'] > d and regions['fright'] > d):
+
+        speed.linear.x = 0
+        pub_twist.publish(speed)
+        #print(regions)
+        print('face_obstacle')
+        for j in range(0,10):
+            speed.linear.x = 0.05
+            speed.angular.z = -0.05
+            pub_twist.publish(speed)
 
 # Initialize node
 rospy.init_node("prj_phoenix")
@@ -75,6 +113,9 @@ sub_loc = rospy.Subscriber("amcl_pose", PoseWithCovarianceStamped , callback_pos
 # Creating an action client that communicates with action server /move_base that uses a message MoveBaseAction
 client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
 # Action client waits for the action server to be launched and then sends the goals to the server
+
+laser_sub = rospy.Subscriber("scan" , LaserScan , callback_scan)
+pub_twist = rospy.Publisher('cmd_vel', Twist, queue_size =2)
 client.wait_for_server()
 
 rate = rospy.Rate(1)
@@ -83,9 +124,17 @@ while not rospy.is_shutdown():
     for i in range(len(final_order)):
         if final_order[i][3] > 9:
             goal = goal_struct(final_order[i])
+            print("To Goal {}!".format(final_order[i]))
             rospy.sleep(5)
             client.send_goal(goal)
             client.wait_for_result()
-            if client.get_state() == 3:
+
+            if client.get_state() == 4 or client.get_state() == 5 or client.get_state() == 6 :
+                print("Goal {} has skipped!".format(i))
+                adjust_position(current_x_pos , current_y_pos)
+                final_order.remove(final_order[i])
+                #client.cancel_goals_at_and_before_time(goal)
+
+            elif client.get_state() == 3:
                 print("Goal {} has reached!".format(i))
                 rate.sleep()
