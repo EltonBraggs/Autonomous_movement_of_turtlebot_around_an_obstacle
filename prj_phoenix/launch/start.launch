@@ -1,0 +1,29 @@
+<launch>
+
+  <!-- Launching the turtlebot environment-->
+<include file="$(find turtlebot3_gazebo)/launch/turtlebot3_empty_world.launch" />
+   Spawning the model onto the environment
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_model"
+    args="-file /home/elton/catkin_ws/src/eb-192129_tier4/final_project_practice/model2.sdf -sdf -x 3 -y -4 -model final_prj"
+    output="screen">
+  </node>
+  <!-- Launching the Map -->
+  <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch">
+    <arg name="map_file" default="/home/elton/catkin_ws/src/eb-192129_tier4/final_project_practice/map2.yaml" />
+  </include>
+
+  <!-- Publishing the /goals topic -->
+  <!--<include file="$(find goal_publisher)/launch/goal_publisher.launch">
+  <arg name="config_file" default="practice_goals.yaml"/>
+  <node pkg="goal_publisher" type="goal_pub.py" name="goal_pub" output="screen">
+    <param name="config_file" value="$(arg config_file)" type="str" />
+  </node>
+  <node pkg="goal_publisher" type="marker_pub.py" name="marker_pub" output="screen">
+		<param name="config_file" value="$(arg config_file)" type="str"/>
+	</node>
+</include>-->
+
+  <!-- Launching the final project node -->
+  <node pkg="prj_phoenix" type="eb_192129_basic.py" name="final_prj" output="screen">
+  </node>
+</launch>
