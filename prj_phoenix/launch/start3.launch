@@ -1,42 +1,6 @@
 <launch>
 
-
-
-
-
-  <!-- start world
-  <node name="gazebo" pkg="gazebo_ros" type="gazebo"
-   args="$(find turtlebot3_gazebo)/worlds/empty.world" respawn="false" output="screen" />
-   Spawning the model onto the environment
-  <node pkg="gazebo_ros" type="spawn_model" name="spawn_model"
-    args="-file /home/elton/catkin_ws/src/rr-192152_tier4/final_project_practice/model2.sdf -sdf -x 3 -y -4 -model final_prj"
-    output="screen">
-  </node>-->
-
-  <!-- include our robots -->
-
-
-
-
   <arg name="robot_id" default="robot1"/>
-
-  <node
-  name="dynamic_reconfigure_DWAPlannerROS"
-  pkg="dynamic_reconfigure"
-  type="dynparam"
-  args="load /$(arg robot_id)/move_base/local_costmap $(find prj_phoenix)/config/dwa_local_planner_params_burger.yaml"/>
-
-  <node
-  name="dynamic_reconfigure_global_costmap"
-  pkg="dynamic_reconfigure"
-  type="dynparam"
-  args="load /$(arg robot_id)/move_base/local_costmap $(find prj_phoenix)/config/global_costmap_params.yaml"/>
-
-  <node
-  name="dynamic_reconfigure_local_costmap"
-  pkg="dynamic_reconfigure"
-  type="dynparam"
-  args="load /$(arg robot_id)/move_base/local_costmap $(find prj_phoenix)/config/local_costmap_params.yaml"/>
 
 
   <!-- Launching the final project node -->
