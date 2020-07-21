@@ -104,8 +104,8 @@ def adjust_position(current_x_pos , current_y_pos):
         #print(regions)
         print('face_obstacle')
         for j in range(0,10):
-            speed.linear.x = 0.05
-            speed.angular.z = -0.05
+            speed.linear.x = 0.1
+            speed.angular.z = -0.1
             pub_twist.publish(speed)
 
 # Initialize node
