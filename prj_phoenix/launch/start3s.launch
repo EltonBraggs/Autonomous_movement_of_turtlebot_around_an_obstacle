@@ -4,10 +4,6 @@
 
 
 
-  <!-- include our robots -->
-
-
-
 
   <arg name="robot_id" default="robot1"/>
 
