@@ -1,0 +1,32 @@
+<launch>
+
+
+
+
+
+
+  <arg name="robot_id" default="robot1"/>
+
+  <node
+  name="dynamic_reconfigure_DWAPlannerROS"
+  pkg="dynamic_reconfigure"
+  type="dynparam"
+  args="load /$(arg robot_id)/move_base/local_costmap $(find prj_phoenix)/config/dwa_local_planner_params_burger.yaml"/>
+
+  <node
+  name="dynamic_reconfigure_global_costmap"
+  pkg="dynamic_reconfigure"
+  type="dynparam"
+  args="load /$(arg robot_id)/move_base/local_costmap $(find prj_phoenix)/config/global_costmap_params.yaml"/>
+
+  <node
+  name="dynamic_reconfigure_local_costmap"
+  pkg="dynamic_reconfigure"
+  type="dynparam"
+  args="load /$(arg robot_id)/move_base/local_costmap $(find prj_phoenix)/config/local_costmap_params.yaml"/>
+
+
+  <!-- Launching the final project node -->
+  <node pkg="prj_phoenix" type="final_prj_phoenix.py" name="prj_phoenix" ns="$(arg robot_id)" output="screen">
+  </node>
+</launch>
