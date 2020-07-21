@@ -8,13 +8,10 @@ from tf import transformations
 from tf.transformations import euler_from_quaternion
 import actionlib
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction, MoveBaseResult
-
-<<<<<<< HEAD
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Header
 from geometry_msgs.msg import Twist
-#from home.elton.catkin_ws.src.amr_multi_turtlebot.multi_turtlebot.launch import robots
-#from launch import robots
+
 d=0.5
 pub_twist = None
 
@@ -35,10 +32,9 @@ def callback_scan(msg):
      'left'     :   min(min(msg.ranges[51:90]),max_)
      }
 
-# Defining a list - goals_list
-=======
+
 # Defining list - goals_list[containing goals and rewards], final_order[ascending goal list on the basis of distance betwen robot & goal]
->>>>>>> dc7f06c5e1505d9bca322d4b49655d31ccd172f0
+
 goals_list = list()
 final_order = list()
 current_y_pos = 0
@@ -130,31 +126,23 @@ rate = rospy.Rate(1)
 
 while not rospy.is_shutdown(): #code run until interrupted
     for i in range(len(final_order)):
-<<<<<<< HEAD
+
         if final_order[i][3] > 9:
             goal = goal_struct(final_order[i])
             print("To Goal {}!".format(final_order[i]))
-=======
+
         if final_order[i][3] > 0: 
             goal = goal_struct(final_order[i]) #defining next nearest goal from final_order list
->>>>>>> dc7f06c5e1505d9bca322d4b49655d31ccd172f0
             rospy.sleep(5)
             client.send_goal(goal) #sending goal coordinates
             client.wait_for_result()
-<<<<<<< HEAD
-
             if client.get_state() == 4 or client.get_state() == 5 or client.get_state() == 6 :
                 print("Goal {} has skipped!".format(i))
                 adjust_position(current_x_pos , current_y_pos)
                 final_order.remove(final_order[i])
                 #client.cancel_goals_at_and_before_time(goal)
-
-            elif client.get_state() == 3:
-                print("Goal {} has reached!".format(i))
-=======
             if client.get_state() == 3: #when acheived state 3 - goal acheived successfully by robot  
                 print("Goal {} has reached!".format(i) + " and the Reward is : " + str(final_order[i][3])) 
 		#if self.i == 9:
                 #    print "all points are reached"
->>>>>>> dc7f06c5e1505d9bca322d4b49655d31ccd172f0
                 rate.sleep()
