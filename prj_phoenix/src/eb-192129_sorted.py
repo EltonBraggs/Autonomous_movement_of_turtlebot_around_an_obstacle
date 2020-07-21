@@ -1,17 +1,22 @@
 #!/usr/bin/env python
 
+#!/usr/bin/env python
+
 import rospy
 import math
-from goal_publisher.msg import PointArray 
+from goal_publisher.msg import PointArray
 from geometry_msgs.msg import PoseWithCovarianceStamped
-from tf import transformations 
+from tf import transformations
 from tf.transformations import euler_from_quaternion
 import actionlib
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction, MoveBaseResult
+
+
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Header
 from geometry_msgs.msg import Twist
-
+#from home.elton.catkin_ws.src.amr_multi_turtlebot.multi_turtlebot.launch import robots
+#from launch import robots
 d=0.5
 pub_twist = None
 
@@ -32,6 +37,7 @@ def callback_scan(msg):
      'left'     :   min(min(msg.ranges[51:90]),max_)
      }
 
+# Defining a list - goals_list
 
 # Defining list - goals_list[containing goals and rewards], final_order[ascending goal list on the basis of distance betwen robot & goal]
 
@@ -54,9 +60,9 @@ def callback_goalpoint(msg):
     inity = current_y_pos
     for i in range(len(msg.goals)):
 	#adding goal coordinates and respective rewards to goals_list:
-        goals_list.append([msg.goals[i].x, msg.goals[i].y, msg.goals[i].z, msg.goals[i].reward]) 
+        goals_list.append([msg.goals[i].x, msg.goals[i].y, msg.goals[i].z, msg.goals[i].reward])
 
-    #appending dist_list and final_order lists: 
+    #appending dist_list and final_order lists:
     for j in range(len(msg.goals)):
         dist_list = []
         for k in range(len(goals_list)):
@@ -67,7 +73,7 @@ def callback_goalpoint(msg):
         goals_list.pop(dist_list.index(min(dist_list))) #removing goal at current minimum distance after reaching at goal
 
 # callback function to octain present x and y coordinates, orientation of the turtlebot
-def callback_position(pos): 
+def callback_position(pos):
     global current_x_pos
     global current_y_pos
     global current_theta
@@ -111,10 +117,10 @@ rospy.init_node("prj_phoenix")
 sub = rospy.Subscriber("/goals", PointArray, callback_goalpoint)
 
 # Subscribe to /amcl_pose topic to localize the turtlebot in the given map
-sub_loc = rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped , callback_position)
+sub_loc = rospy.Subscriber("amcl_pose", PoseWithCovarianceStamped , callback_position)
 
 # Creating an action client that communicates with action server /move_base that uses a message MoveBaseAction
-client = actionlib.SimpleActionClient("/move_base", MoveBaseAction)
+client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
 
 # Action client waits for the action server to be launched and then sends the goals to the server
 
@@ -124,25 +130,19 @@ client.wait_for_server()
 
 rate = rospy.Rate(1)
 
-while not rospy.is_shutdown(): #code run until interrupted
+while not rospy.is_shutdown():
     for i in range(len(final_order)):
-
         if final_order[i][3] > 9:
             goal = goal_struct(final_order[i])
-            print("To Goal {}!".format(final_order[i]))
-
-        if final_order[i][3] > 0: 
-            goal = goal_struct(final_order[i]) #defining next nearest goal from final_order list
             rospy.sleep(5)
-            client.send_goal(goal) #sending goal coordinates
+            client.send_goal(goal)
             client.wait_for_result()
             if client.get_state() == 4 or client.get_state() == 5 or client.get_state() == 6 :
                 print("Goal {} has skipped!".format(i))
-                adjust_position(current_x_pos , current_y_pos)
                 final_order.remove(final_order[i])
-                #client.cancel_goals_at_and_before_time(goal)
-            if client.get_state() == 3: #when acheived state 3 - goal acheived successfully by robot  
+                adjust_position(current_x_pos, current_y_pos)
+            if client.get_state() == 3:
                 print("Goal {} has reached!".format(i) + " and the Reward is : " + str(final_order[i][3])) 
-		#if self.i == 9:
-                #    print "all points are reached"
                 rate.sleep()
+
+             
