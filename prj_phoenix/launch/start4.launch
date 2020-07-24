@@ -1,6 +1,12 @@
 <launch>
 
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> a79484b0bc1bba0f18e2c186f631bbf5eaae2069
   <arg name="robot_id" default="robot1"/>
 
 
