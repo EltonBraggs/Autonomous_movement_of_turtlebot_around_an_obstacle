@@ -1,10 +1,10 @@
 #Tier 4
 
-AMR Final Project :
-**Team Name : Phoenix**
->Members :
->>Rishabh Rana @rr-192152
->>Elton Wilroy Braggs @eb-192129
+AMR Final Project :\
+**Team Name : Phoenix**\
+Members :
+1. Rishabh Rana @rr-192152
+2. Elton Wilroy Braggs @eb-192129
 
 # Project Description:
 # To move robot to specified locations by avoiding obstacles and other robots in arena:
@@ -26,23 +26,17 @@ There will be four robots at a time in the arena and register to same ros master
 For that an argument is passed in launch file for robot number :  <arg name="robot_id" default="robot1"/>.
 Thus, there will be a different set of topics for each robot, where they are subscribed. 
 
-
-To test your program, under "close to challenge" conditions you can find a new ROS package called
-multi-turtlebot at git@fbe-gitlab.hs-weingarten.de:mat-iki/amr-multi-turtlebot.git. It contains a launchfile called main.launch which will
-launch the practice arena with four turtlebots in it.
-You will have to set the arguments model_file and map_file e.g.
-
 # Steps in the simulation :-
->For testing robot in practice arena:
->>Launch multi-turtlebot package with main.launch file, this will launch a practice arena with given model and map. For model and map file, arguments for absolute path must be given. This can be launched with following command:
+**For testing robot in practice arena:**
+1. Launch multi-turtlebot package with main.launch file, this will launch a practice arena with given model and map. For model and map file, arguments for absolute path must be given. This can be launched with following command:
 ```
 roslaunch multi_turtlebot main.launch model_file:=/abolute_path/to/arena.sdf map_file:=/path/to/map2.yaml
 ```
->>Now launch the goal publisher file, to fetch the goals' data by launching goal_publisher with practice_goals2.yaml config file.
+2. Now launch the goal publisher file, to fetch the goals' data by launching goal_publisher with practice_goals2.yaml config file.
 ```
 roslaunch goal_publisher goal_publisher.launch config_file:=practice_goals2.yaml
 ```
->>Launch the package prj_phoenix with start_final.launch file and argument for robot_id. Now the robot will subscribe to one set of data  for goals and start moving towards the goals, avoiding the obstacles and other robots.
+3. Launch the package prj_phoenix with start_final.launch file and argument for robot_id. Now the robot will subscribe to one set of data  for goals and start moving towards the goals, avoiding the obstacles and other robots.
    The position of bot and goal number will be published on the terminal.
 ```
 roslaunch prj_phoenix start_final.launch robot_id:= robot1
@@ -54,7 +48,7 @@ The argument value of robot_id can be changed.
 Included Topics:
 1. **/goals** - All goal points are published into this topic and it is subscribed it to obtain the goals.
 2. **amcl_pos** - To localize the turtlebot in the given map. [geometry_msgs/PoseWithCovarianceStamped]
-package:
+package:\
 **move_base package** : In this project, we used an action client that communicates with action server /move_base that uses a message MoveBaseAction.\
    client = actionlib.SimpleActionClient("move_base", MoveBaseAction)\
 It provides an implementation of an action that, given a goal in the world, will attempt to reach it with a mobile base. 
@@ -69,10 +63,10 @@ The feedback server is required to provide the following information:\
 If the goal status from the feedback server is 4 , 5 or 6 , it skips the goal and moves to the next goal. 
 
 **Parameter values changed from the default move base parameters:**
->Path_distance_bias = 8.0
->Inflation_radius:
->>global_costmap = 0.2
->>local_costmap = 0.1
+>Path_distance_bias = 8.0\
+>Inflation_radius:\
+>>global_costmap = 0.2\
+>>local_costmap = 0.1\
 >Velocity and the width values were increased.
 
 
