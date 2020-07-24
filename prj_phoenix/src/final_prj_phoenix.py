@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import rospy
 import math
 from goal_publisher.msg import PointArray
@@ -9,13 +8,10 @@ from tf import transformations
 from tf.transformations import euler_from_quaternion
 import actionlib
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction, MoveBaseResult
-
-
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Header
 from geometry_msgs.msg import Twist
-#from home.elton.catkin_ws.src.amr_multi_turtlebot.multi_turtlebot.launch import robots
-#from launch import robots
+
 d=0.5
 pub_twist = None
 
@@ -36,17 +32,14 @@ def callback_scan(msg):
      'left'     :   min(min(msg.ranges[51:90]),max_)
      }
 
-# Defining a list - goals_list
-
 # Defining list - goals_list[containing goals and rewards], final_order[ascending goal list on the basis of distance betwen robot & goal]
-
 goals_list = list()
 final_order = list()
 current_y_pos = 0
 current_x_pos = 0
 
 # Function to calculate distance between goal and current position of robot:
-def dist_calc(currx, curry, goalx, goaly):
+def dist_calc(currx, curry, goalx, goaly): #takes current and goal coordinates
     dist = math.sqrt((goalx - currx) ** 2 + (goaly - curry) ** 2)
     return dist
 
@@ -99,14 +92,12 @@ def adjust_position(current_x_pos , current_y_pos):
     global regions
     speed = Twist()
     while (regions['front'] > d and regions['fleft'] > d and regions['fright'] > d):
-
         speed.linear.x = 0
         pub_twist.publish(speed)
-        #print(regions)
         print('face_obstacle')
         for j in range(0,10):
-            speed.linear.x = 0.05
-            speed.angular.z = -0.05
+            speed.linear.x = 0.1
+            speed.angular.z = -0.1
             pub_twist.publish(speed)
 
 # Initialize node
@@ -125,13 +116,16 @@ client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
 
 laser_sub = rospy.Subscriber("scan" , LaserScan , callback_scan)
 pub_twist = rospy.Publisher('cmd_vel', Twist, queue_size =2)
+
+#Subscribe to laserscan 
+
 client.wait_for_server()
 
 rate = rospy.Rate(1)
 
 while not rospy.is_shutdown():
     for i in range(len(final_order)):
-        if final_order[i][3] > 9:
+        if final_order[i][3] > 0 and final_order[i][3] < 101:
             goal = goal_struct(final_order[i])
             rospy.sleep(5)
             client.send_goal(goal)
@@ -141,7 +135,5 @@ while not rospy.is_shutdown():
                 final_order.remove(final_order[i])
                 adjust_position(current_x_pos, current_y_pos)
             if client.get_state() == 3:
-                print("Goal {} has reached!".format(i) + " and the Reward is : " + str(final_order[i][3])) 
+                print("Goal {} has reached!".format(i) + " and the Reward is : " + str(final_order[i][3]))
                 rate.sleep()
-
-             

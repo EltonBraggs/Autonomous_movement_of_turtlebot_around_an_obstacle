@@ -27,6 +27,6 @@
 
 
   <!-- Launching the final project node -->
-  <node pkg="prj_phoenix" type="eb-192129_sorted.py" name="prj_phoenix" ns="$(arg robot_id)" output="screen">
+  <node pkg="prj_phoenix" type="final_prj_phoenix.py" name="prj_phoenix" ns="$(arg robot_id)" output="screen">
   </node>
 </launch>
